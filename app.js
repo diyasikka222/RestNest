@@ -15,6 +15,7 @@ const ExpressError = require("./utils/ExpressError.js");
 const { listingSchema, reviewSchema } = require("./serverSchema.js");
 const Review = require("../Major_Project_RESTNEST/models/review.js");
 const session = require("express-session");
+const MongoStore = require ('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -24,6 +25,8 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
+const dburl = process.env.ATLASDB_URL;
+
 main().then(() => {
     console.log("Connected to MongoDB");
 }).catch(err => {
@@ -31,7 +34,7 @@ main().then(() => {
 });
 
 async function main() {
-    await mongoose.connect("mongodb://127.0.0.1:27017/RESTNEST");
+    await mongoose.connect(dburl);
 }
 
 app.set("view engine", "ejs");
@@ -41,8 +44,21 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+const store = MongoStore.create({
+    mongoUrl:dburl,
+    crypto: {
+        secret: process.env.SECRET,
+    },
+    touchAfter: 24 * 3600,
+});
+
+store.on("error", () => {
+    console.log("Error in Mongo Session Store", err);
+})
+
 const sessionOptions = {
-    secret: "mysupersecretcode",
+    store,
+    secret: process.env.SECRET,
     resave: false,
     saveUnitialized: true,
     cookie: {
