@@ -1,4 +1,4 @@
-<img width="1468" alt="Screenshot 2025-04-21 at 13 21 21" src="https://github.com/user-attachments/assets/c49db5f7-ecd0-46c4-9db7-191eaf02935c" />#RESTNEST
+#RESTNEST
 RestNest is a reviewing and listing web app built with Nodejs, Expess, MongoDB, EJS, Bootstrap. It allows users to browse restaurants, view details, and leave reviews.
 
 ###Features
